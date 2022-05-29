@@ -145,12 +145,12 @@ class TextBox extends Render {
 }
 
 abstract class SceneBehavior {
-  abstract void scene_draw();
+  void scene_draw() {}
 
-  abstract void scene_mousePressed();
-  abstract void scene_mouseReleased();
-  abstract void scene_keyPressed();
-  abstract void scene_keyReleased();
+  void scene_mousePressed() {}
+  void scene_mouseReleased() {}
+  void scene_keyPressed() {}
+  void scene_keyReleased() {}
   
   abstract void load(Scene scene);
   abstract void unload(Scene scene);

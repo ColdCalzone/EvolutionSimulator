@@ -1,6 +1,7 @@
 void setup() {
   size(800, 600);
-  frameRate(24);
+  frameRate(30);
+  noStroke();
   final Scene testScene = new Scene(new Render[] {
     new Cell(50.0, 100.0, 0.5, 100.0, color(random(255), random(255), random(255))),
     new Particle(new PVector(width / 2.0 + 200.0, height / 2.0), 20.0, 20.0),
@@ -13,19 +14,9 @@ void setup() {
       public void onRelease(Button button) {}
     })
   }, new SceneBehavior() {
-        public void scene_draw() {}
-        
         public void load(Scene scene) {}
 
         public void unload(Scene scene) {}
-        
-        public void scene_keyPressed() {}
-        
-        public void scene_keyReleased() {}
-        
-        public void scene_mousePressed() {}
-        
-        public void scene_mouseReleased() {}
     });
 
   final Scene testScene2 = new Scene(new Render[] {
@@ -53,7 +44,6 @@ void setup() {
           renderObjects.remove(renderObj);
         }
       }
-      System.out.println("Unloaded");
     }
     
     public void scene_keyPressed() {
@@ -63,12 +53,6 @@ void setup() {
         }
       }
     }
-    
-    public void scene_keyReleased() {}
-    
-    public void scene_mousePressed() {}
-    
-    public void scene_mouseReleased() {}
   });
   
   testScene.setSceneBehavior(new SceneBehavior() {
@@ -101,7 +85,6 @@ void setup() {
           renderObjects.remove(renderObj);
         }
       }
-      System.out.println("Unloaded");
     }
     
     public void scene_keyPressed() {
@@ -111,12 +94,6 @@ void setup() {
         }
       }
     }
-    
-    public void scene_keyReleased() {}
-    
-    public void scene_mousePressed() {}
-    
-    public void scene_mouseReleased() {}
   });
   testScene2.load();
 }
