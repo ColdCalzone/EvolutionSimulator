@@ -2,11 +2,15 @@ import java.util.*;
 
 static ArrayList<Render> renderObjects = new ArrayList<Render>();
 
+static ArrayList<Render> relativeRenderObjects = new ArrayList<Render>();
+
 static ArrayList<Button> activeButtons = new ArrayList<Button>();
 
 static ArrayList<Button> allButtons = new ArrayList<Button>();
 
 static Scene currentScene = null;
+
+static Position cameraPosition = null;
 
 // Don't make multiple PLEASE I couldn't get this as a singleton
 class GlobalState {
@@ -51,8 +55,13 @@ class GlobalState {
   }
 }
 
+interface Position {
+  public PVector getPosition();
+}
+
 // Basic type for classes to inherit to become renderable
 abstract class Render {
+  protected boolean relativeToCamera = false;
   public abstract void render();
 }
 
@@ -65,26 +74,65 @@ abstract class ButtonClickBehavior {
 }
 
 // Basic button system to simplify button making
-class Button extends Render {
+class Button extends Render implements Position {
   color buttonColor, textColor, pressedColor;
-  String buttonText;
+  String buttonText = "";
   PVector position, size;
   float textSize;
   ButtonClickBehavior clickBehavior;
   private boolean pressed;
+  private boolean isToggle = false;
+
+  @Override
+  public PVector getPosition() {
+    return position;
+  }
 
   public boolean getPressed() {
     return pressed;
   }
 
   public void onClick() {
-    this.pressed = true;
     clickBehavior.onClick(this);
+    if(!isToggle) this.pressed = true;
+    else {
+      this.pressed = !this.pressed;
+      if(!this.pressed) {
+        onRelease();
+      }
+    }
+    
   }
   
   public void onRelease() {
-    this.pressed = false;
+    if(this.pressed && this.isToggle) return;
     clickBehavior.onRelease(this);
+    if(!isToggle) this.pressed = false;
+  }
+
+  Button(color _color, color pressedColor, String text, color textColor, float textSize, PVector position, PVector size, boolean toggle, ButtonClickBehavior clickBehavior) {
+    this.buttonColor = _color;
+    this.pressedColor = pressedColor;
+    this.buttonText = text;
+    this.position = position;
+    this.size = size;
+    this.textColor = textColor;
+    this.textSize = textSize;
+    this.clickBehavior = clickBehavior;
+    this.isToggle = toggle;
+    allButtons.add(this);
+  }
+
+  Button(color _color, color pressedColor, color textColor, float textSize, PVector position, PVector size, boolean toggle, ButtonClickBehavior clickBehavior) {
+    this.buttonColor = _color;
+    this.pressedColor = pressedColor;
+    this.position = position;
+    this.size = size;
+    this.textColor = textColor;
+    this.textSize = textSize;
+    this.clickBehavior = clickBehavior;
+    this.isToggle = toggle;
+    allButtons.add(this);
   }
 
   Button(color _color, color pressedColor, String text, color textColor, float textSize, PVector position, PVector size, ButtonClickBehavior clickBehavior) {
@@ -99,15 +147,56 @@ class Button extends Render {
     allButtons.add(this);
   }
 
+  Button(color _color, color pressedColor, color textColor, float textSize, PVector position, PVector size, ButtonClickBehavior clickBehavior) {
+    this.buttonColor = _color;
+    this.pressedColor = pressedColor;
+    this.position = position;
+    this.size = size;
+    this.textColor = textColor;
+    this.textSize = textSize;
+    this.clickBehavior = clickBehavior;
+    allButtons.add(this);
+  }
+
+  Button(color _color, color pressedColor, String text, color textColor, float textSize, PVector position, PVector size, boolean toggle, boolean cameraRel, ButtonClickBehavior clickBehavior) {
+    this.buttonColor = _color;
+    this.pressedColor = pressedColor;
+    this.buttonText = text;
+    this.position = position;
+    this.size = size;
+    this.textColor = textColor;
+    this.textSize = textSize;
+    this.clickBehavior = clickBehavior;
+    this.isToggle = toggle;
+    this.relativeToCamera = cameraRel;
+    allButtons.add(this);
+  }
+
+  Button(color _color, color pressedColor, color textColor, float textSize, PVector position, PVector size, boolean toggle, boolean cameraRel, ButtonClickBehavior clickBehavior) {
+    this.buttonColor = _color;
+    this.pressedColor = pressedColor;
+    this.position = position;
+    this.size = size;
+    this.textColor = textColor;
+    this.textSize = textSize;
+    this.clickBehavior = clickBehavior;
+    this.isToggle = toggle;
+    this.relativeToCamera = cameraRel;
+    allButtons.add(this);
+  }
+
+
   public Button activate() {
     activeButtons.add(this);
-    renderObjects.add(this);
+    if(this.relativeToCamera) relativeRenderObjects.add(this);
+     else renderObjects.add(this);
     return this;
   }
 
   public Button deactivate() {
     activeButtons.remove(this);
-    renderObjects.remove(this);
+    if(this.relativeToCamera) relativeRenderObjects.remove(this);
+    else renderObjects.remove(this);
     return this;
   }
 
@@ -120,11 +209,16 @@ class Button extends Render {
   }
 }
 
-class TextBox extends Render {
+class TextBox extends Render implements Position {
   color bgColor, textColor;
   PVector position, size;
   float textSize;
   String text;
+
+  @Override
+  public PVector getPosition() {
+    return position;
+  }
 
   TextBox(String text, float textSize, color bgColor, color textColor, PVector position, PVector size) {
     this.bgColor = bgColor;
@@ -210,6 +304,13 @@ GlobalState globalState = new GlobalState();
 void draw() {
   if(currentScene != null) {
     currentScene.scene_draw();
+  }
+  for(Render renderOb : relativeRenderObjects) {
+    renderOb.render(); 
+  }
+  if(cameraPosition != null) {
+    PVector pos = cameraPosition.getPosition();
+    translate(-pos.x + (width / 2), pos.y - (height / 2));
   }
   // render step
   for(Render renderOb : renderObjects) {
