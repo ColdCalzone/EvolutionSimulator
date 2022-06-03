@@ -123,13 +123,11 @@ class Button extends Render implements Position {
     allButtons.add(this);
   }
 
-  Button(color _color, color pressedColor, color textColor, float textSize, PVector position, PVector size, boolean toggle, ButtonClickBehavior clickBehavior) {
+  Button(color _color, color pressedColor, PVector position, PVector size, boolean toggle, ButtonClickBehavior clickBehavior) {
     this.buttonColor = _color;
     this.pressedColor = pressedColor;
     this.position = position;
     this.size = size;
-    this.textColor = textColor;
-    this.textSize = textSize;
     this.clickBehavior = clickBehavior;
     this.isToggle = toggle;
     allButtons.add(this);
@@ -147,13 +145,11 @@ class Button extends Render implements Position {
     allButtons.add(this);
   }
 
-  Button(color _color, color pressedColor, color textColor, float textSize, PVector position, PVector size, ButtonClickBehavior clickBehavior) {
+  Button(color _color, color pressedColor, PVector position, PVector size, ButtonClickBehavior clickBehavior) {
     this.buttonColor = _color;
     this.pressedColor = pressedColor;
     this.position = position;
     this.size = size;
-    this.textColor = textColor;
-    this.textSize = textSize;
     this.clickBehavior = clickBehavior;
     allButtons.add(this);
   }
@@ -172,13 +168,11 @@ class Button extends Render implements Position {
     allButtons.add(this);
   }
 
-  Button(color _color, color pressedColor, color textColor, float textSize, PVector position, PVector size, boolean toggle, boolean cameraRel, ButtonClickBehavior clickBehavior) {
+  Button(color _color, color pressedColor, PVector position, PVector size, boolean toggle, boolean cameraRel, ButtonClickBehavior clickBehavior) {
     this.buttonColor = _color;
     this.pressedColor = pressedColor;
     this.position = position;
     this.size = size;
-    this.textColor = textColor;
-    this.textSize = textSize;
     this.clickBehavior = clickBehavior;
     this.isToggle = toggle;
     this.relativeToCamera = cameraRel;
@@ -209,18 +203,18 @@ class Button extends Render implements Position {
   }
 }
 
-class TextBox extends Render implements Position {
+class Box extends Render implements Position {
   color bgColor, textColor;
   PVector position, size;
   float textSize;
-  String text;
+  String text = "";
 
   @Override
   public PVector getPosition() {
     return position;
   }
 
-  TextBox(String text, float textSize, color bgColor, color textColor, PVector position, PVector size) {
+  Box(String text, float textSize, color bgColor, color textColor, PVector position, PVector size) {
     this.bgColor = bgColor;
     this.textColor = textColor;
     this.text = text;
@@ -229,12 +223,40 @@ class TextBox extends Render implements Position {
     this.textSize = textSize;
   }
 
+  Box(color bgColor, PVector position, PVector size) {
+    this.bgColor = bgColor;
+    this.position = position;
+    this.size = size;
+  }
+
   void render() {
     fill(this.bgColor);
     rect(this.position.x, this.position.y, this.size.x, this.size.y);
     fill(this.textColor);
     textSize(this.textSize);
     text(this.text, this.position.x, this.position.y, this.size.x, this.size.y);
+  }
+}
+
+class Circle extends Render implements Position {
+  color bgColor;
+  PVector position;
+  float size;
+
+  @Override
+  public PVector getPosition() {
+    return position;
+  }
+
+  Circle(color bgColor, PVector position, float size) {
+    this.bgColor = bgColor;
+    this.position = position;
+    this.size = size;
+  }
+
+  void render() {
+    fill(this.bgColor);
+    ellipse(this.position.x, this.position.y, this.size, this.size);
   }
 }
 

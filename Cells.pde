@@ -19,6 +19,15 @@ class Cell extends Render implements Position {
     this.cellColor = cellColor;
     allCells.add(this);
   }
+
+  public Cell() {
+    this.size = 40 + random(60);
+    this.speed = 100 + random(200);
+    this.sight = 50 + random(100);
+    this.energy = 200.0;
+    this.cellColor = color(random(255), random(255), random(255));
+    allCells.add(this);
+  }
   
   public void render() {
     fill(lerpColor(this.cellColor, color(0), .33));
