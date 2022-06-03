@@ -320,7 +320,16 @@ void draw() {
 
 void mousePressed() {
   for(Button button : activeButtons) {
-    if(mouseX > button.position.x && mouseY > button.position.y && mouseX < (button.position.x + button.size.x) && mouseY < (button.position.y + button.size.y) && globalState.leftMouseClicked()) {
+    if(mouseX
+      + (cameraPosition != null && !button.relativeToCamera ? cameraPosition.getPosition().x : 0)
+      > button.position.x && mouseY > button.position.y
+      && mouseX
+      + (cameraPosition != null && !button.relativeToCamera ?cameraPosition.getPosition().x : 0)
+      < (button.position.x + button.size.x) &&
+      mouseY
+      + (cameraPosition != null && !button.relativeToCamera ? cameraPosition.getPosition().y : 0)
+      < (button.position.y + button.size.y)
+      && globalState.leftMouseClicked()) {
       button.onClick();
       break;
     }
